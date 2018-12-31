@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans   http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="driverClassName">
+            <value>com.mysql.jdbc.Driver</value>
+        </property>
+        <property name="url">
+            <value>jdbc:mysql://127.0.0.1:3306/flowable?useUnicode=true&amp;characterEncoding=UTF-8
+            </value>
+        </property>
+        <property name="username">
+            <value>yeyalin</value>
+        </property>
+        <property name="password" value="yeyalin"/>
+    </bean>
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+
+    <bean id="processEngineConfiguration" class="org.flowable.spring.SpringProcessEngineConfiguration">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="databaseSchemaUpdate" value="true"/>
+        <property name="mailServerHost" value="localhost"/>
+        <property name="mailServerPort" value="5025"/>
+        <property name="asyncExecutorActivate" value="false" />
+        <!-- 自动部署-->
+        <!--<property name="deploymentResources" value="classpath*:*.bpmn"/>
+        <property name="deploymentMode" value="default" />-->
+
+        <!-- 部署是否生成图片,默认(true)生成图片,对应数据库表:ACT_GE_BYTEARRAY-->
+        <property name="createDiagramOnDeploy" value="false" />
+        <!-- 部署设置中文宋体-->
+        <property name="activityFontName" value="宋体" />
+        <property name="labelFontName" value="宋体" />
+        <property name="annotationFontName" value="宋体" />
+        <!-- id生成器序列号:步长-->
+        <!--<property name="idBlockSize" value="1000" />-->
+        <!--<property name="idGenerator" ref="strongUuidGenerator" />-->
+        <!-- 自定义uuid生成id-->
+        <property name="idGenerator" ref="customUuidGenerator" />
+
+
+    </bean>
+    <bean id="customUuidGenerator" class="com.study.demo.CustomUuidGenerator" />
+    <bean id="processEngine" class="org.flowable.spring.ProcessEngineFactoryBean">
+        <property name="processEngineConfiguration" ref="processEngineConfiguration"/>
+    </bean>
+
+    <bean id="repositoryService" factory-bean="processEngine" factory-method="getRepositoryService"/>
+    <bean id="runtimeService" factory-bean="processEngine" factory-method="getRuntimeService"/>
+    <bean id="taskService" factory-bean="processEngine" factory-method="getTaskService"/>
+    <bean id="historyService" factory-bean="processEngine" factory-method="getHistoryService"/>
+    <bean id="formService" factory-bean="processEngine" factory-method="getFormService"/>
+    <bean id="managementService" factory-bean="processEngine" factory-method="getManagementService"/>
+
+</beans>
