@@ -23,7 +23,7 @@
 
 - 定义bean
 
-```
+```   
 <bean id="customUuidGenerator" class="com.study.demo.CustomUuidGenerator" />
 ```
 
